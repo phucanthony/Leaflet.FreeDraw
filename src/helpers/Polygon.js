@@ -130,7 +130,11 @@ export const removeFor = (map, polygon) => {
  * @return {void}
  */
 export const clearFor = map => {
-    Array.from(polygons.get(map).values()).forEach(polygon => removeFor(map, polygon));
+    try {
+        Array.from(polygons.get(map).values()).forEach(polygon => removeFor(map, polygon));
+    } catch (e) {
+
+    }
 };
 
 /**
