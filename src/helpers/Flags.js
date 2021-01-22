@@ -59,29 +59,27 @@ export const modeFor = (map, mode, options) => {
     // Fire the updated mode.
     if (map[instanceKey]) {
         map[instanceKey].fire('mode', { mode });
-    }
+        // Disable the map if the `CREATE` mode is a default flag.
+        mode & CREATE ? map.dragging.disable() : map.dragging.enable();
+        Array.from(polygons.get(map)).forEach(polygon => {
 
-    // Disable the map if the `CREATE` mode is a default flag.
-    mode & CREATE ? map.dragging.disable() : map.dragging.enable();
+            polygon[edgesKey].forEach(edge => {
 
-    Array.from(polygons.get(map)).forEach(polygon => {
+                // Modify the edge class names based on whether edit mode is enabled.
+                mode & EDIT ? DomUtil.removeClass(edge._icon, 'disabled') : DomUtil.addClass(edge._icon, 'disabled');
 
-        polygon[edgesKey].forEach(edge => {
-
-            // Modify the edge class names based on whether edit mode is enabled.
-            mode & EDIT ? DomUtil.removeClass(edge._icon, 'disabled') : DomUtil.addClass(edge._icon, 'disabled');
+            });
 
         });
 
-    });
+        // Apply the conditional class names to the map container.
+        classesFor(map, mode);
 
-    // Apply the conditional class names to the map container.
-    classesFor(map, mode);
-
-    // Fire the event for having manipulated the polygons if the `hasManipulated` is `true` and the
-    // `notifyAfterEditExit` option is equal to `true`, and then reset the `notifyDeferredKey`.
-    options.notifyAfterEditExit && map[notifyDeferredKey]();
-    map[notifyDeferredKey] = () => {};
+        // Fire the event for having manipulated the polygons if the `hasManipulated` is `true` and the
+        // `notifyAfterEditExit` option is equal to `true`, and then reset the `notifyDeferredKey`.
+        options.notifyAfterEditExit && map[notifyDeferredKey]();
+        map[notifyDeferredKey] = () => {};
+    }
 
     return mode;
 
