@@ -57,7 +57,9 @@ export const modeFor = (map, mode, options) => {
     map[modesKey] = mode;
 
     // Fire the updated mode.
-    map[instanceKey].fire('mode', { mode });
+    if (map[instanceKey]) {
+        map[instanceKey].fire('mode', { mode });
+    }
 
     // Disable the map if the `CREATE` mode is a default flag.
     mode & CREATE ? map.dragging.disable() : map.dragging.enable();
